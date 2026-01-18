@@ -1,19 +1,25 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
-const Field = require("./Field");
+module.exports = (sequelize, DataTypes) => {
+  const Expense = sequelize.define('Expense', {
+    productionId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    amount: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+  }, {
+    tableName: 'expenses',
+    timestamps: true,
+  });
 
-const Expense = sequelize.define("Expense", {
-  id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-  type: { type: DataTypes.STRING, allowNull: false },
-  amount: { type: DataTypes.FLOAT, allowNull: false },
-  date: { type: DataTypes.DATEONLY, allowNull: false },
-  fieldId: { type: DataTypes.INTEGER, references: { model: Field, key: "id" } }
-}, {
-  tableName: "expenses",
-  timestamps: true
-});
-
-Expense.belongsTo(Field, { foreignKey: "fieldId" });
-Field.hasMany(Expense, { foreignKey: "fieldId" });
-
-module.exports = Expense;
+  return Expense;
+};

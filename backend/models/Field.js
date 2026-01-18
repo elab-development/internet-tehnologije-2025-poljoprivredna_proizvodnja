@@ -1,26 +1,21 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
-const User = require("./User");
+module.exports = (sequelize, DataTypes) => {
+  const Field = sequelize.define('Field', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    area: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  }, {
+    tableName: 'fields',
+    timestamps: true,
+  });
 
-const Field = sequelize.define("Field", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
-  },
-  name: { type: DataTypes.STRING, allowNull: false },
-  location: { type: DataTypes.STRING, allowNull: false },
-  size: { type: DataTypes.FLOAT, allowNull: false },
-  userId: {
-    type: DataTypes.INTEGER,
-    references: { model: User, key: "id" }
-  }
-}, {
-  tableName: "fields",
-  timestamps: true
-});
-
-Field.belongsTo(User, { foreignKey: "userId" });
-User.hasMany(Field, { foreignKey: "userId" });
-
-module.exports = Field;
+  return Field;
+};

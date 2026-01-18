@@ -1,25 +1,25 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
-const Crop = require("./Crop");
+module.exports = (sequelize, DataTypes) => {
+  const Production = sequelize.define('Production', {
+    cropId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    fieldId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    quantity: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    harvestDate: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+  }, {
+    tableName: 'productions',
+    timestamps: true,
+  });
 
-const Production = sequelize.define("Production", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
-  },
-  quantity: { type: DataTypes.FLOAT, allowNull: false },
-  date: { type: DataTypes.DATEONLY, allowNull: false },
-  cropId: {
-    type: DataTypes.INTEGER,
-    references: { model: Crop, key: "id" }
-  }
-}, {
-  tableName: "productions",
-  timestamps: true
-});
-
-Production.belongsTo(Crop, { foreignKey: "cropId" });
-Crop.hasMany(Production, { foreignKey: "cropId" });
-
-module.exports = Production;
+  return Production;
+};
