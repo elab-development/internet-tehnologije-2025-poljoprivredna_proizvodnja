@@ -3,51 +3,51 @@ import { api } from '../services/api';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
-
-const Fields = () => {
+import Navbar from '../components/Navbar';
+export default function Fields() {
   const [fields, setFields] = useState([]);
   const [name, setName] = useState('');
   const [area, setArea] = useState('');
+  const [location, setLocation] = useState('');
 
-  const loadFields = async () => {
-    const res = await api.get('/fields');
+  const load = async () => {
+    const res = await api.get('/api/fields');
     setFields(res.data);
   };
 
-  useEffect(() => {
-    loadFields();
-  }, []);
+  useEffect(() => { load(); }, []);
 
-  const createField = async () => {
-    await api.post('/fields', { name, area });
+  const create = async () => {
+    await api.post('/api/fields', { name, area, location });
     setName('');
     setArea('');
-    loadFields();
+    setLocation('');
+    load();
   };
 
-  const deleteField = async (id) => {
-    await api.delete(`/fields/${id}`);
-    loadFields();
+  const remove = async (id) => {
+    await api.delete(`/api/fields/${id}`);
+    load();
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl mb-4">Njive</h2>
-
-      <Card title="Nova njiva">
-        <Input label="Naziv" value={name} onChange={e => setName(e.target.value)} />
-        <Input label="Površina (ha)" value={area} onChange={e => setArea(e.target.value)} />
-        <Button onClick={createField}>Dodaj</Button>
+    <div>
+      <h2>Fields</h2>
+ <Navbar />
+      <Card title="Add Field">
+        <Input label="Name" value={name} onChange={e => setName(e.target.value)} />
+        <Input label="Area (ha)" value={area} onChange={e => setArea(e.target.value)} />
+        <Input label="Location" value={location} onChange={e => setLocation(e.target.value)} />
+        <Button onClick={create}>Add</Button>
       </Card>
 
       {fields.map(f => (
         <Card key={f.id} title={f.name}>
-          <p>Površina: {f.area} ha</p>
-          <Button className="bg-red-500 mt-2" onClick={() => deleteField(f.id)}>Obriši</Button>
+          <p>Area: {f.area} ha</p>
+          <p>Location: {f.location}</p>
+          <Button onClick={() => remove(f.id)}>Delete</Button>
         </Card>
       ))}
     </div>
   );
-};
-
-export default Fields;
+}

@@ -1,36 +1,33 @@
 import React, { useState } from 'react';
+import { api } from '../services/api';
 import Input from '../components/Input';
 import Button from '../components/Button';
-import { api, setAuthToken } from '../services/api';
-import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+export default function Login() {
 
-const Login = () => {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+
+  
+  const handleLogin = async () => {
     try {
       const res = await api.post('/users/login', { email, password });
-      setAuthToken(res.data.token);
+      alert('Login successful!');
       localStorage.setItem('token', res.data.token);
-      navigate('/');
     } catch (err) {
-      alert(err.response?.data?.message || 'Error logging in');
+      alert(err.response?.data?.message || 'Login failed');
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
-      <form onSubmit={handleSubmit}>
-        <Input label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <Button type="submit">Login</Button>
-      </form>
+    <div>
+      <h2>Login</h2>
+       <Navbar />
+      <Input label="Email" value={email} onChange={e => setEmail(e.target.value)} />
+      <Input label="Password" value={password} onChange={e => setPassword(e.target.value)} type="password" />
+      <Button onClick={handleLogin}>Login</Button>
     </div>
   );
-};
-
-export default Login;
+}

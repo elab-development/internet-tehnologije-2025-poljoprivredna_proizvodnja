@@ -3,7 +3,7 @@ import { api } from '../services/api';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
-
+import Navbar from '../components/Navbar';
 const Productions = () => {
   const [list, setList] = useState([]);
   const [cropId, setCropId] = useState('');
@@ -28,7 +28,7 @@ const Productions = () => {
   return (
     <div className="p-6">
       <h2 className="text-2xl mb-4">Proizvodnja</h2>
-
+<Navbar />
       <Card title="Nova proizvodnja">
         <Input label="Crop ID" value={cropId} onChange={e => setCropId(e.target.value)} />
         <Input label="Količina (kg)" value={quantity} onChange={e => setQuantity(e.target.value)} />
