@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { api } from '../services/api';
 import Input from '../components/Input';
 import Button from '../components/Button';
-import Navbar from '../components/Navbar';
+
 export default function Login() {
 
 
@@ -24,7 +24,7 @@ export default function Login() {
   return (
     <div>
       <h2>Login</h2>
-       <Navbar />
+ 
       <Input label="Email" value={email} onChange={e => setEmail(e.target.value)} />
       <Input label="Password" value={password} onChange={e => setPassword(e.target.value)} type="password" />
       <Button onClick={handleLogin}>Login</Button>

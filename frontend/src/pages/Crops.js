@@ -3,7 +3,7 @@ import { api } from '../services/api';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import Navbar from '../components/Navbar';
+
 const Crops = () => {
   const [crops, setCrops] = useState([]);
   const [name, setName] = useState('');
@@ -24,7 +24,7 @@ const Crops = () => {
   return (
     <div className="p-6">
       <h2 className="text-2xl mb-4">Usevi</h2>
-<Navbar />
+
       <Card title="Novi usev">
         <Input label="Naziv" value={name} onChange={e => setName(e.target.value)} />
         <Input label="Field ID" value={fieldId} onChange={e => setFieldId(e.target.value)} />
