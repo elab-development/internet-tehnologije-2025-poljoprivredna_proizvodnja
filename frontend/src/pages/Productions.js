@@ -24,26 +24,11 @@ export default function Productions() {
   const [productions, setProductions] = useState([]);
   const [form, setForm] = useState(initialForm);
 
-  // učitaj sve proizvodnje i mapiraj snake_case u camelCase
+  // učitaj sve proizvodnje direktno iz API-ja
   const loadProductions = async () => {
     try {
-      const res = await api.get('/productions'); // ili /api/productions
-      const data = res.data.map(p => ({
-        id: p.id,
-        fieldId: p.field_id,                 // snake_case u camelCase
-        sowingDate: p.sowing_date,
-        seedQuantity: p.seed_quantity,
-        hybrid: p.hybrid,
-        fertilizationType: p.fertilization_type,
-        fertilizationQuantity: p.fertilization_quantity,
-        fertilizationDate: p.fertilization_date,
-        protectionType: p.protection_type,
-        irrigationSystem: p.irrigation_system,
-        waterUsed: p.water_used,
-        harvestDate: p.harvest_date,
-        yieldKg: p.yield_kg
-      }));
-      setProductions(data);
+      const res = await api.get('/productions');
+      setProductions(res.data); // backend vraća camelCase, nema potrebe za mapiranjem
     } catch (err) {
       console.error('Error loading productions:', err);
     }
@@ -79,6 +64,9 @@ export default function Productions() {
     }
   };
 
+  // funkcija za prikaz datuma
+  const formatDate = (date) => date ? new Date(date).toLocaleDateString() : '-';
+
   return (
     <>
       <Navbar />
@@ -106,16 +94,16 @@ export default function Productions() {
         ) : (
           productions.map(p => (
             <Card key={p.id} title={`Proizvodnja #${p.id}`}>
-              <p>Parcela ID: {p.fieldId}</p>
-              <p>Datum setve: {p.sowingDate}</p>
-              <p>Količina semena: {p.seedQuantity} kg</p>
-              <p>Hibrid: {p.hybrid}</p>
-              <p>Đubrivo: {p.fertilizationType} ({p.fertilizationQuantity})</p>
-              <p>Datum đubrenja: {p.fertilizationDate}</p>
-              <p>Zaštita: {p.protectionType}</p>
-              <p>Navodnjavanje: {p.irrigationSystem} ({p.waterUsed} m3)</p>
-              <p>Datum žetve: {p.harvestDate}</p>
-              <p>Prinos: {p.yieldKg} kg</p>
+              <p>Parcela ID: {p.fieldId ?? '-'}</p>
+              <p>Datum setve: {formatDate(p.sowingDate)}</p>
+              <p>Količina semena: {p.seedQuantity ?? '-'} kg</p>
+              <p>Hibrid: {p.hybrid ?? '-'}</p>
+              <p>Đubrivo: {p.fertilizationType ?? '-'} ({p.fertilizationQuantity ?? '-'})</p>
+              <p>Datum đubrenja: {formatDate(p.fertilizationDate)}</p>
+              <p>Zaštita: {p.protectionType ?? '-'}</p>
+              <p>Navodnjavanje: {p.irrigationSystem ?? '-'} ({p.waterUsed ?? '-'} m3)</p>
+              <p>Datum žetve: {formatDate(p.harvestDate)}</p>
+              <p>Prinos: {p.yieldKg ?? '-'} kg</p>
               <Button onClick={() => removeProduction(p.id)}>Obriši</Button>
             </Card>
           ))

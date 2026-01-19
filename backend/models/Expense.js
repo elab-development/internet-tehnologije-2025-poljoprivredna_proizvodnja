@@ -1,25 +1,40 @@
 module.exports = (sequelize, DataTypes) => {
   const Expense = sequelize.define('Expense', {
+    fieldId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: 'fieldId' // ovo mora da se poklapa sa bazom
+    },
     productionId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
+      field: 'productionId'
+    },
+    type: {
+      type: DataTypes.STRING,
+      field: 'TYPE'  // po bazi je veliko slovo
     },
     description: {
       type: DataTypes.STRING,
-      allowNull: false,
+      field: 'description'
     },
     amount: {
       type: DataTypes.FLOAT,
-      allowNull: false,
+      field: 'amount'
     },
     date: {
       type: DataTypes.DATE,
-      allowNull: false,
-    },
+      field: 'DATE' // po bazi je veliko slovo
+    }
   }, {
-    tableName: 'expenses',
-    timestamps: true,
+    tableName: 'Expenses', // eksplicitno ime tabele
+    timestamps: false      // ako tabela nema createdAt/updatedAt
   });
+
+  Expense.associate = (models) => {
+    Expense.belongsTo(models.Field, { foreignKey: 'fieldId' });
+    Expense.belongsTo(models.Production, { foreignKey: 'productionId' });
+  };
 
   return Expense;
 };
