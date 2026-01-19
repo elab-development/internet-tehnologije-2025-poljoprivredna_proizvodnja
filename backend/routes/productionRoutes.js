@@ -1,12 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const productionController = require('../controllers/productionController');
-const auth = require('../middleware/auth');
+const router = require('express').Router();
+const c = require('../controllers/productionController');
 
-router.get('/', productionController.getAllProductions);
-router.get('/:id', productionController.getProductionById);
-router.post('/', auth, productionController.createProduction);
-router.put('/:id', auth, productionController.updateProduction);
-router.delete('/:id', auth, productionController.deleteProduction);
+router.get('/', c.getAll);
+router.post('/', c.create);
+router.put('/:id', c.update);
 
 module.exports = router;

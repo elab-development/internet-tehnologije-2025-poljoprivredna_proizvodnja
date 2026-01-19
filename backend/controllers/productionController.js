@@ -1,52 +1,26 @@
 const { Production } = require('../models');
 
-exports.getAllProductions = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
-    const productions = await Production.findAll();
-    res.json(productions);
+    const list = await Production.findAll({ raw: true });
+    console.log('Productions from DB:', list); // <- dodaj ovo
+    res.json(list);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.getProductionById = async (req, res) => {
-  try {
-    const production = await Production.findByPk(req.params.id);
-    if (!production) return res.status(404).json({ message: 'Production not found' });
-    res.json(production);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+
+exports.create = async (req, res) => {
+  const production = await Production.create(req.body);
+  res.json(production);
 };
 
-exports.createProduction = async (req, res) => {
-  try {
-    const { cropId, quantity, date } = req.body;
-    const production = await Production.create({ cropId, quantity, date });
-    res.json(production);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+exports.update = async (req, res) => {
+  const p = await Production.findByPk(req.params.id);
+  if (!p) return res.status(404).json({ message: 'Not found' });
 
-exports.updateProduction = async (req, res) => {
-  try {
-    const production = await Production.findByPk(req.params.id);
-    if (!production) return res.status(404).json({ message: 'Production not found' });
-    await production.update(req.body);
-    res.json(production);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-exports.deleteProduction = async (req, res) => {
-  try {
-    const production = await Production.findByPk(req.params.id);
-    if (!production) return res.status(404).json({ message: 'Production not found' });
-    await production.destroy();
-    res.json({ message: 'Production deleted' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+  await p.update(req.body);
+  res.json(p);
 };

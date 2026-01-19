@@ -32,10 +32,6 @@ db.User.belongsTo(db.Role, { foreignKey: 'roleId' });
 db.Field.hasMany(db.Crop, { foreignKey: 'fieldId', onDelete: 'CASCADE' });
 db.Crop.belongsTo(db.Field, { foreignKey: 'fieldId' });
 
-// Crop - Production (1:M)
-db.Crop.hasMany(db.Production, { foreignKey: 'cropId', onDelete: 'CASCADE' });
-db.Production.belongsTo(db.Crop, { foreignKey: 'cropId' });
-
 // Field - Production (1:M)
 db.Field.hasMany(db.Production, { foreignKey: 'fieldId', onDelete: 'CASCADE' });
 db.Production.belongsTo(db.Field, { foreignKey: 'fieldId' });
@@ -44,6 +40,7 @@ db.Production.belongsTo(db.Field, { foreignKey: 'fieldId' });
 db.Production.hasMany(db.Expense, { foreignKey: 'productionId', onDelete: 'CASCADE' });
 db.Expense.belongsTo(db.Production, { foreignKey: 'productionId' });
 
+// Dodaj sequelize i Sequelize objekat
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
