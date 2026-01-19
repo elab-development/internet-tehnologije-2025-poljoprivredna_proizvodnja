@@ -1,10 +1,13 @@
-import React from 'react';
-
-export default function Input({ label, value, onChange, type = 'text' }) {
+export default function Input({ label, name, value, onChange, ...rest }) {
   return (
-    <div>
+    <div className="input-group">
       <label>{label}</label>
-      <input type={type} value={value} onChange={onChange} />
+      <input
+        name={name}
+        value={value}
+        onChange={onChange}
+        {...rest}
+      />
     </div>
   );
 }

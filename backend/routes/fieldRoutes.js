@@ -1,12 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const fieldController = require('../controllers/fieldController');
-const auth = require('../middleware/auth');
+const controller = require('../controllers/fieldController');
 
-router.get('/', fieldController.getAllFields);
-router.get('/:id', fieldController.getFieldById);
-router.post('/', auth, fieldController.createField);
-router.put('/:id', auth, fieldController.updateField);
-router.delete('/:id', auth, fieldController.deleteField);
+router.get('/', controller.getAll);
+router.post('/', controller.create);
+router.put('/:id', controller.update);
+router.delete('/:id', controller.remove);
 
 module.exports = router;

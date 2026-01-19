@@ -2,20 +2,29 @@ module.exports = (sequelize, DataTypes) => {
   const Field = sequelize.define('Field', {
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     area: {
       type: DataTypes.FLOAT,
-      allowNull: false,
+      allowNull: false
+    },
+    soilType: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
     location: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.STRING, // npr "45.123,19.456"
+      allowNull: true
     },
-  }, {
-    tableName: 'fields',
-    timestamps: true,
+    season: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    }
   });
+
+  Field.associate = (models) => {
+    Field.hasMany(models.Production, { foreignKey: 'fieldId' });
+  };
 
   return Field;
 };
