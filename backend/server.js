@@ -15,6 +15,9 @@ const fieldRoutes = require('./routes/fieldRoutes');
 const cropRoutes = require('./routes/cropRoutes');
 const productionRoutes = require('./routes/productionRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
+const reportRoutes = require('./routes/reportRoutes');
+app.use('/api/reports', reportRoutes);
+
 
 app.use('/api/users', userRoutes);
 app.use('/api/fields', fieldRoutes);

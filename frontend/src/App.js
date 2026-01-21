@@ -8,6 +8,7 @@ import Fields from './pages/Fields';
 import Crops from './pages/Crops';
 import Productions from './pages/Productions';
 import Expenses from './pages/Expenses';
+import Reports from './pages/Reports';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/crops" element={<Crops />} />
         <Route path="/productions" element={<Productions />} />
         <Route path="/expenses" element={<Expenses />} />
+         <Route path="/reports" element={<Reports />} />
       </Routes>
     </Router>
   );

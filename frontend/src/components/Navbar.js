@@ -9,6 +9,7 @@ export default function Navbar() {
       <Link to="/crops" style={{ marginRight: '10px' }}>Crops</Link>
       <Link to="/productions" style={{ marginRight: '10px' }}>Productions</Link>
       <Link to="/expenses" style={{ marginRight: '10px' }}>Expenses</Link>
+          <Link to="/reports" style={{ marginRight: '10px' }}>Reports</Link>
       <Link to="/login" style={{ marginRight: '10px' }}>Login</Link>
       <Link to="/register">Register</Link>
     </nav>
