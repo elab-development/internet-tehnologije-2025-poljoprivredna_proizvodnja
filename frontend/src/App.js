@@ -9,6 +9,7 @@ import Crops from './pages/Crops';
 import Productions from './pages/Productions';
 import Expenses from './pages/Expenses';
 import Reports from './pages/Reports';
+import Notifications from './pages/Notifications';
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
         <Route path="/crops" element={<Crops />} />
         <Route path="/productions" element={<Productions />} />
         <Route path="/expenses" element={<Expenses />} />
+<Route path="/notifications" element={<Notifications />} />
+
          <Route path="/reports" element={<Reports />} />
       </Routes>
     </Router>

@@ -16,6 +16,9 @@ const cropRoutes = require('./routes/cropRoutes');
 const productionRoutes = require('./routes/productionRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+app.use('/api/notifications', notificationRoutes);
+
 app.use('/api/reports', reportRoutes);
 
 
