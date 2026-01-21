@@ -7,56 +7,67 @@ module.exports = (sequelize, DataTypes) => {
     },
     fieldId: { 
       type: DataTypes.INTEGER, 
-      allowNull: false 
+      allowNull: false,
+      field: 'fieldId'   // eksplicitno mapiranje na kolonu u bazi
     },
     sowingDate: { 
       type: DataTypes.DATE, 
-      allowNull: true 
+      allowNull: true,
+      field: 'sowingDate'
     },
     seedQuantity: { 
       type: DataTypes.FLOAT, 
-      allowNull: true 
+      allowNull: true,
+      field: 'seedQuantity'
     },
     hybrid: { 
       type: DataTypes.STRING, 
-      allowNull: true 
+      allowNull: true,
+      field: 'hybrid'
     },
     fertilizationType: { 
       type: DataTypes.STRING, 
-      allowNull: true 
+      allowNull: true,
+      field: 'fertilizationType'
     },
     fertilizationQuantity: { 
       type: DataTypes.FLOAT, 
-      allowNull: true 
+      allowNull: true,
+      field: 'fertilizationQuantity'
     },
     fertilizationDate: { 
       type: DataTypes.DATE, 
-      allowNull: true 
+      allowNull: true,
+      field: 'fertilizationDate'
     },
     protectionType: { 
       type: DataTypes.STRING, 
-      allowNull: true 
+      allowNull: true,
+      field: 'protectionType'
     },
     irrigationSystem: { 
       type: DataTypes.STRING, 
-      allowNull: true 
+      allowNull: true,
+      field: 'irrigationSystem'
     },
     waterUsed: { 
       type: DataTypes.FLOAT, 
-      allowNull: true 
+      allowNull: true,
+      field: 'waterUsed'
     },
     harvestDate: { 
       type: DataTypes.DATE, 
-      allowNull: true 
+      allowNull: true,
+      field: 'harvestDate'
     },
     yieldKg: { 
       type: DataTypes.FLOAT, 
-      allowNull: true 
+      allowNull: true,
+      field: 'yieldKg'
     }
   }, {
-    tableName: 'productions',
-    timestamps: true,     // automatski dodaje createdAt i updatedAt
-    underscored: true     // mapira snake_case u camelCase
+    tableName: 'productions', // ime tabele u bazi
+    timestamps: true           // ostavi ako tabela ima createdAt/updatedAt
   });
 
   Production.associate = (models) => {
