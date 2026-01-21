@@ -3,22 +3,26 @@ import { api } from '../services/api';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
+import Navbar from '../components/Navbar';
 
-const Expenses = () => {
+const initialForm = {
+  fieldId: '',
+  productionId: '',
+  type: '',
+  description: '',
+  amount: '',
+  date: ''
+};
+
+export default function Expenses() {
   const [expenses, setExpenses] = useState([]);
-  const [form, setForm] = useState({
-    fieldId: '',
-    productionId: '',
-    type: '',
-    description: '',
-    amount: '',
-    date: ''
-  });
+  const [form, setForm] = useState(initialForm);
 
-  // Učitavanje svih troškova
+  // učitaj sve troškove
   const loadExpenses = async () => {
     try {
-      const res = await api.get('/api/expenses'); // proveri da li je ruta /api/expenses
+      const res = await api.get('/expenses');
+       console.log('Loaded expenses in frontend:', res.data);
       setExpenses(res.data);
     } catch (err) {
       console.error('Error loading expenses:', err);
@@ -29,12 +33,12 @@ const Expenses = () => {
     loadExpenses();
   }, []);
 
-  // Promena input polja
+  // update forme
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // Dodavanje novog troška
+  // dodaj novi trošak
   const createExpense = async () => {
     if (!form.description || !form.amount) {
       alert('Unesi opis i iznos!');
@@ -42,62 +46,65 @@ const Expenses = () => {
     }
 
     try {
-      await api.post('/api/expenses', form);
-      setForm({
-        fieldId: '',
-        productionId: '',
-        type: '',
-        description: '',
-        amount: '',
-        date: ''
+      await api.post('/expenses', {
+        fieldId: form.fieldId ? Number(form.fieldId) : null,
+        productionId: form.productionId ? Number(form.productionId) : null,
+        type: form.type,
+        description: form.description,
+        amount: Number(form.amount),
+        date: form.date ? new Date(form.date + 'T00:00:00').toISOString() : null
       });
+
+      setForm(initialForm);
       loadExpenses();
     } catch (err) {
-      console.error('Error creating expense:', err);
+      console.error('Error creating expense:', err.response?.data || err);
     }
   };
 
-  // Brisanje troška
+  // obrisi trošak
   const removeExpense = async (id) => {
     try {
-      await api.delete(`/api/expenses/${id}`);
+      await api.delete(`/expenses/${id}`);
       loadExpenses();
     } catch (err) {
       console.error('Error deleting expense:', err);
     }
   };
 
+  // formatiranje datuma
+  const formatDate = (date) => date ? new Date(date).toLocaleDateString() : '-';
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl mb-4">Troškovi</h2>
+    <>
+      <Navbar />
+      <div className="container">
+        <h2>Troškovi</h2>
 
-      {/* Dodavanje novog troška */}
-      <Card title="Novi trošak">
-        <Input label="Parcela ID" name="fieldId" value={form.fieldId} onChange={handleChange} />
-        <Input label="ID proizvodnje" name="productionId" value={form.productionId} onChange={handleChange} />
-        <Input label="Tip troška" name="type" value={form.type} onChange={handleChange} />
-        <Input label="Opis" name="description" value={form.description} onChange={handleChange} />
-        <Input label="Iznos (RSD)" name="amount" type="number" value={form.amount} onChange={handleChange} />
-        <Input label="Datum" name="date" type="date" value={form.date} onChange={handleChange} />
-        <Button onClick={createExpense}>Dodaj</Button>
-      </Card>
+        <Card title="Novi trošak">
+          <Input label="Parcela ID" name="fieldId" value={form.fieldId} onChange={handleChange} />
+          <Input label="ID proizvodnje" name="productionId" value={form.productionId} onChange={handleChange} />
+          <Input label="Tip troška" name="type" value={form.type} onChange={handleChange} />
+          <Input label="Opis" name="description" value={form.description} onChange={handleChange} />
+          <Input label="Iznos (RSD)" name="amount" type="number" value={form.amount} onChange={handleChange} />
+          <Input label="Datum" name="date" type="date" value={form.date} onChange={handleChange} />
+          <Button onClick={createExpense}>Dodaj trošak</Button>
+        </Card>
 
-      {/* Lista troškova */}
-      {expenses.length === 0 ? (
-        <p>Još nema troškova.</p>
-      ) : (
-        expenses.map(e => (
-          <Card key={e.id} title={e.description}>
-            <p>Tip: {e.type}</p>
-            <p>Iznos: {e.amount} RSD</p>
-            <p>Parcela: {e.fieldId}, Proizvodnja: {e.productionId}</p>
-            <p>Datum: {e.date}</p>
-            <Button onClick={() => removeExpense(e.id)}>Obriši</Button>
-          </Card>
-        ))
-      )}
-    </div>
+        {expenses.length === 0 ? (
+          <p>Još nema troškova.</p>
+        ) : (
+          expenses.map(e => (
+            <Card key={e.id} title={`Trošak #${e.id}`}>
+              <p>Tip: {e.type ?? '-'}</p>
+              <p>Iznos: {e.amount ?? '-'} RSD</p>
+              <p>Parcela: {e.fieldId ?? '-'}, Proizvodnja: {e.productionId ?? '-'}</p>
+              <p>Datum: {formatDate(e.date)}</p>
+              <Button onClick={() => removeExpense(e.id)}>Obriši</Button>
+            </Card>
+          ))
+        )}
+      </div>
+    </>
   );
-};
-
-export default Expenses;
+}
