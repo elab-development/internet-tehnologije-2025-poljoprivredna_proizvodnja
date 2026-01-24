@@ -1,14 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-  const Role = sequelize.define('Role', {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-  }, {
-    tableName: 'roles',
-    timestamps: false,
+  const User = sequelize.define('User', {
+    name: DataTypes.STRING,
+    email: DataTypes.STRING,
+    password: DataTypes.STRING,
+    roleId: DataTypes.INTEGER
   });
 
-  return Role;
+  return User;
 };

@@ -1,14 +1,13 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = function(req, res, next) {
-  const token = req.header('Authorization')?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Access denied' });
+module.exports = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'No token' });
 
   try {
-    const verified = jwt.verify(token, 'tajni_kljuc'); // promeni tajni_kljuc
-    req.user = verified;
+    req.user = jwt.verify(token, 'tajni_kljuc'); // ⬅ ISTI KLJUČ
     next();
   } catch (err) {
-    res.status(400).json({ message: 'Invalid token' });
+    return res.status(401).json({ error: 'Invalid token' });
   }
 };

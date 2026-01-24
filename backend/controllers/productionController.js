@@ -13,14 +13,36 @@ exports.getAll = async (req, res) => {
 
 
 exports.create = async (req, res) => {
-  const production = await Production.create(req.body);
-  res.json(production);
+  try {
+    // req.user.id dolazi iz JWT middleware-a
+    if ([3, 5].includes(req.user.roleId)) {
+      return res.status(403).json({ message: 'You are not allowed to create a production' });
+    }
+
+    const production = await Production.create(req.body);
+    res.json(production);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
 };
+
 
 exports.update = async (req, res) => {
-  const p = await Production.findByPk(req.params.id);
-  if (!p) return res.status(404).json({ message: 'Not found' });
+  try {
+    // Provera da li je korisnik zabranjen
+    if ([3, 5].includes(req.user.roleId)) {
+      return res.status(403).json({ message: 'You are not allowed to update a production' });
+    }
 
-  await p.update(req.body);
-  res.json(p);
+    const production = await Production.findByPk(req.params.id);
+    if (!production) return res.status(404).json({ message: 'Production not found' });
+
+    await production.update(req.body);
+    res.json(production);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
 };
+
