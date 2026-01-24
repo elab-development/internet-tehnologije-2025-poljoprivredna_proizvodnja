@@ -1,28 +1,67 @@
 const { Field } = require('../models');
 
+// GET all fields
 exports.getAll = async (req, res) => {
-  const fields = await Field.findAll();
-  res.json(fields);
+  try {
+    const fields = await Field.findAll({ raw: true });
+    res.json(fields);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
 };
 
+// CREATE a new field
 exports.create = async (req, res) => {
-  const { name, area, soilType, location, season } = req.body;
-  const field = await Field.create({ name, area, soilType, location, season });
-  res.json(field);
+  try {
+    // Samo Admin i Owner mogu da dodaju
+    if (![1, 4].includes(req.user.roleId)) {
+      return res.status(403).json({ message: 'Niste ovlašćeni da dodate parcelu' });
+    }
+
+    const { name, area, soilType, location, season } = req.body;
+    const field = await Field.create({ name, area, soilType, location, season });
+    res.json(field);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
 };
 
+// UPDATE field
 exports.update = async (req, res) => {
-  const field = await Field.findByPk(req.params.id);
-  if (!field) return res.status(404).json({ message: 'Not found' });
+  try {
+    // Samo Admin i Owner mogu da menjaju
+    if (![1, 4].includes(req.user.roleId)) {
+      return res.status(403).json({ message: 'Niste ovlašćeni da menjate parcelu' });
+    }
 
-  await field.update(req.body);
-  res.json(field);
+    const field = await Field.findByPk(req.params.id);
+    if (!field) return res.status(404).json({ message: 'Parcela nije pronađena' });
+
+    await field.update(req.body);
+    res.json(field);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
 };
 
+// DELETE field
 exports.remove = async (req, res) => {
-  const field = await Field.findByPk(req.params.id);
-  if (!field) return res.status(404).json({ message: 'Not found' });
+  try {
+    // Samo Admin i Owner mogu da brišu
+    if (![1, 4].includes(req.user.roleId)) {
+      return res.status(403).json({ message: 'Niste ovlašćeni da obrišete parcelu' });
+    }
 
-  await field.destroy();
-  res.json({ message: 'Deleted' });
+    const field = await Field.findByPk(req.params.id);
+    if (!field) return res.status(404).json({ message: 'Parcela nije pronađena' });
+
+    await field.destroy();
+    res.json({ message: 'Parcela obrisana' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
 };
