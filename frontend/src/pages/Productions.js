@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { api } from '../services/api';
+import { api, setAuthToken } from '../services/api';
+import { getRole, getUserFromToken } from '../services/auth';
+import { ROLES } from '../constants/roles';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -23,31 +25,44 @@ const initialForm = {
 export default function Productions() {
   const [productions, setProductions] = useState([]);
   const [form, setForm] = useState(initialForm);
-  const [editingId, setEditingId] = useState(null); // ID proizvodnje koju editujemo
+  const [editingId, setEditingId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // učitaj sve proizvodnje
-  const loadProductions = async () => {
-    try {
-      const res = await api.get('/productions');
-      setProductions(res.data);
-    } catch (err) {
-      console.error('Error loading productions:', err);
-    }
-  };
+  const user = getUserFromToken();
+  const roleId = Number(getRole());
+  const canEdit = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER].includes(roleId);
 
   useEffect(() => {
-    loadProductions();
-  }, []);
+    const token = localStorage.getItem('token');
+    if (!token || !user) {
+      setLoading(false);
+      return;
+    }
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    setAuthToken(token);
+
+    const fetchProductions = async () => {
+      try {
+        const res = await api.get('/productions');
+        setProductions(res.data);
+      } catch (err) {
+        console.error('Error loading productions:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductions();
+  }, [user]);
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const createProduction = async () => {
     try {
       await api.post('/productions', form);
       setForm(initialForm);
-      loadProductions();
+      const res = await api.get('/productions');
+      setProductions(res.data);
     } catch (err) {
       console.error('Error creating production:', err);
     }
@@ -56,13 +71,13 @@ export default function Productions() {
   const removeProduction = async (id) => {
     try {
       await api.delete(`/productions/${id}`);
-      loadProductions();
+      const res = await api.get('/productions');
+      setProductions(res.data);
     } catch (err) {
       console.error('Error deleting production:', err);
     }
   };
 
-  // Start edit
   const startEdit = (p) => {
     setEditingId(p.id);
     setForm({
@@ -81,13 +96,13 @@ export default function Productions() {
     });
   };
 
-  // Save edit
   const saveEdit = async () => {
     try {
       await api.put(`/productions/${editingId}`, form);
       setEditingId(null);
       setForm(initialForm);
-      loadProductions();
+      const res = await api.get('/productions');
+      setProductions(res.data);
     } catch (err) {
       console.error('Error updating production:', err);
     }
@@ -98,42 +113,48 @@ export default function Productions() {
     setForm(initialForm);
   };
 
-  const formatDate = (date) => date ? new Date(date).toLocaleDateString() : '-';
+  const formatDate = (date) => (date ? new Date(date).toLocaleDateString() : '-');
+
+  if (!user) return <p className="p-6">Molimo prijavite se da biste videli proizvodnje.</p>;
+
+  if (loading) return <p className="p-6">Učitavanje proizvodnji...</p>;
 
   return (
     <>
       <Navbar />
-      <div className="container">
-        <h2>Proizvodnja kukuruza</h2>
+      <div className="container p-6">
+        <h2 className="text-2xl mb-4">Proizvodnja kukuruza</h2>
 
-        <Card title={editingId ? 'Izmena proizvodnje' : 'Nova proizvodnja'}>
-          <Input label="Parcela ID" name="fieldId" value={form.fieldId} onChange={handleChange} />
-          <Input label="Datum setve" name="sowingDate" type="date" value={form.sowingDate} onChange={handleChange} />
-          <Input label="Količina semena (kg)" name="seedQuantity" value={form.seedQuantity} onChange={handleChange} />
-          <Input label="Hibrid" name="hybrid" value={form.hybrid} onChange={handleChange} />
-          <Input label="Đubrivo" name="fertilizationType" value={form.fertilizationType} onChange={handleChange} />
-          <Input label="Količina đubriva" name="fertilizationQuantity" value={form.fertilizationQuantity} onChange={handleChange} />
-          <Input label="Datum đubrenja" name="fertilizationDate" type="date" value={form.fertilizationDate} onChange={handleChange} />
-          <Input label="Zaštita" name="protectionType" value={form.protectionType} onChange={handleChange} />
-          <Input label="Navodnjavanje" name="irrigationSystem" value={form.irrigationSystem} onChange={handleChange} />
-          <Input label="Potrošnja vode (m3)" name="waterUsed" value={form.waterUsed} onChange={handleChange} />
-          <Input label="Datum žetve" name="harvestDate" type="date" value={form.harvestDate} onChange={handleChange} />
-          <Input label="Prinos (kg)" name="yieldKg" value={form.yieldKg} onChange={handleChange} />
+        {canEdit && (
+          <Card title={editingId ? 'Izmena proizvodnje' : 'Nova proizvodnja'} className="mb-6">
+            <Input label="Parcela ID" name="fieldId" value={form.fieldId} onChange={handleChange} />
+            <Input label="Datum setve" name="sowingDate" type="date" value={form.sowingDate} onChange={handleChange} />
+            <Input label="Količina semena (kg)" name="seedQuantity" value={form.seedQuantity} onChange={handleChange} />
+            <Input label="Hibrid" name="hybrid" value={form.hybrid} onChange={handleChange} />
+            <Input label="Đubrivo" name="fertilizationType" value={form.fertilizationType} onChange={handleChange} />
+            <Input label="Količina đubriva" name="fertilizationQuantity" value={form.fertilizationQuantity} onChange={handleChange} />
+            <Input label="Datum đubrenja" name="fertilizationDate" type="date" value={form.fertilizationDate} onChange={handleChange} />
+            <Input label="Zaštita" name="protectionType" value={form.protectionType} onChange={handleChange} />
+            <Input label="Navodnjavanje" name="irrigationSystem" value={form.irrigationSystem} onChange={handleChange} />
+            <Input label="Potrošnja vode (m3)" name="waterUsed" value={form.waterUsed} onChange={handleChange} />
+            <Input label="Datum žetve" name="harvestDate" type="date" value={form.harvestDate} onChange={handleChange} />
+            <Input label="Prinos (kg)" name="yieldKg" value={form.yieldKg} onChange={handleChange} />
 
-          {editingId ? (
-            <>
-              <Button onClick={saveEdit}>Sačuvaj izmene</Button>
-              <Button onClick={cancelEdit} style={{ marginLeft: '10px' }}>Otkaži</Button>
-            </>
-          ) : (
-            <Button onClick={createProduction}>Sačuvaj proizvodnju</Button>
-          )}
-        </Card>
+            {editingId ? (
+              <>
+                <Button onClick={saveEdit}>Sačuvaj izmene</Button>
+                <Button onClick={cancelEdit} style={{ marginLeft: '10px' }}>Otkaži</Button>
+              </>
+            ) : (
+              <Button onClick={createProduction}>Sačuvaj proizvodnju</Button>
+            )}
+          </Card>
+        )}
 
         {productions.length === 0 ? (
           <p>Još nema proizvodnji.</p>
         ) : (
-          productions.map(p => (
+          productions.map((p) => (
             <Card key={p.id} title={`Proizvodnja #${p.id}`} className="mt-4">
               <p>Parcela ID: {p.fieldId ?? '-'}</p>
               <p>Datum setve: {formatDate(p.sowingDate)}</p>
@@ -145,8 +166,13 @@ export default function Productions() {
               <p>Navodnjavanje: {p.irrigationSystem ?? '-'} ({p.waterUsed ?? '-'} m3)</p>
               <p>Datum žetve: {formatDate(p.harvestDate)}</p>
               <p>Prinos: {p.yieldKg ?? '-'} kg</p>
-              <Button onClick={() => startEdit(p)}>Izmeni</Button>
-              <Button onClick={() => removeProduction(p.id)} style={{ marginLeft: '10px' }}>Obriši</Button>
+
+              {canEdit && (
+                <>
+                  <Button onClick={() => startEdit(p)}>Izmeni</Button>
+                  <Button onClick={() => removeProduction(p.id)} style={{ marginLeft: '10px' }}>Obriši</Button>
+                </>
+              )}
             </Card>
           ))
         )}
