@@ -4,7 +4,7 @@ import { getRole, getUserFromToken } from '../services/auth';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import Navbar from '../components/Navbar';
+
 
 export default function Fields() {
   const [fields, setFields] = useState([]);
@@ -100,7 +100,7 @@ export default function Fields() {
 
   return (
     <>
-      <Navbar />
+  
       <div className="p-6">
         <h2 className="text-2xl mb-4">Parcele</h2>
 

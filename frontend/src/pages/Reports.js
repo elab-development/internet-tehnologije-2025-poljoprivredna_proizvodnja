@@ -3,7 +3,7 @@ import { api } from '../services/api';
 import Card from '../components/Card';
 import Input from '../components/Input';
 import Button from '../components/Button';
-import Navbar from '../components/Navbar';
+
 
 export default function Reports() {
   const [year, setYear] = useState('');
@@ -36,7 +36,7 @@ export default function Reports() {
 
   return (
     <div className="p-6">
-      <Navbar />
+  
       <h2 className="text-2xl mb-4">Izveštaji</h2>
 
       {/* Filter panel */}

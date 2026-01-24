@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import Card from '../components/Card';
 import Button from '../components/Button';
-import Navbar from '../components/Navbar';
+
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
@@ -53,7 +53,7 @@ export default function Notifications() {
 
   return (
     <div className="p-6">
-      <Navbar />
+
       <h2 className="text-2xl mb-4">Obaveštenja</h2>
 
       <Card title="Kontrole">

@@ -4,7 +4,7 @@ import { getRole } from '../services/auth';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import Navbar from '../components/Navbar';
+
 import { ROLES } from '../constants/roles';
 
 const initialForm = {
@@ -91,7 +91,7 @@ export default function Expenses() {
 
   return (
     <>
-      <Navbar />
+
       <div className="container p-6">
         <h2 className="text-2xl mb-4">Troškovi</h2>
 

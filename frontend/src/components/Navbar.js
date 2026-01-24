@@ -1,18 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+
   return (
-    <nav style={{ padding: '10px', borderBottom: '1px solid #ccc', marginBottom: '20px' }}>
-      <Link to="/" style={{ marginRight: '10px' }}>Dashboard</Link>
-      <Link to="/fields" style={{ marginRight: '10px' }}>Fields</Link>
-      <Link to="/crops" style={{ marginRight: '10px' }}>Crops</Link>
-      <Link to="/productions" style={{ marginRight: '10px' }}>Productions</Link>
-      <Link to="/expenses" style={{ marginRight: '10px' }}>Expenses</Link>
-          <Link to="/reports" style={{ marginRight: '10px' }}>Reports</Link>
-           <Link to="/notifications" style={{ marginRight: '10px' }}>Notifications</Link>
-      <Link to="/login" style={{ marginRight: '10px' }}>Login</Link>
-      <Link to="/register">Register</Link>
+    <nav className="navbar">
+      <div className="navbar-logo">AgroPanel</div>
+      
+      <div className={`navbar-menu ${isOpen ? 'open' : ''}`}>
+        <Link to="/" onClick={() => setIsOpen(false)}>Dashboard</Link>
+        <Link to="/fields" onClick={() => setIsOpen(false)}>Parcele</Link>
+    
+        <Link to="/productions" onClick={() => setIsOpen(false)}>Proizvodnje</Link>
+        <Link to="/expenses" onClick={() => setIsOpen(false)}>Troškovi</Link>
+        <Link to="/reports" onClick={() => setIsOpen(false)}>Izveštaji</Link>
+        <Link to="/notifications" onClick={() => setIsOpen(false)}>Obaveštenja</Link>
+         <Link to="/Login" onClick={() => setIsOpen(false)}>Login</Link>
+           <Link to="/register" onClick={() => setIsOpen(false)}>Registruj</Link>
+      
+      </div>
+
+      {/* Burger na desnoj strani */}
+      <div className="burger" onClick={toggleMenu}>
+        <span className={`line ${isOpen ? 'rotate1' : ''}`}></span>
+        <span className={`line ${isOpen ? 'fade' : ''}`}></span>
+        <span className={`line ${isOpen ? 'rotate2' : ''}`}></span>
+      </div>
     </nav>
   );
 }

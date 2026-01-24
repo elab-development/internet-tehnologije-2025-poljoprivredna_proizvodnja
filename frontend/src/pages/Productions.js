@@ -5,7 +5,7 @@ import { ROLES } from '../constants/roles';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import Navbar from '../components/Navbar';
+
 
 const initialForm = {
   fieldId: '',
@@ -121,7 +121,7 @@ export default function Productions() {
 
   return (
     <>
-      <Navbar />
+  
       <div className="container p-6">
         <h2 className="text-2xl mb-4">Proizvodnja kukuruza</h2>
 
