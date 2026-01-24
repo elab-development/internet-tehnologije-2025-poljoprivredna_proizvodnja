@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../services/api';
+import { getRole } from '../services/auth';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Navbar from '../components/Navbar';
+import { ROLES } from '../constants/roles';
 
 const initialForm = {
   fieldId: '',
@@ -17,28 +19,38 @@ const initialForm = {
 export default function Expenses() {
   const [expenses, setExpenses] = useState([]);
   const [form, setForm] = useState(initialForm);
+  const [loading, setLoading] = useState(true);
 
-  // učitaj sve troškove
-  const loadExpenses = async () => {
+  const roleId = Number(getRole());
+  const canAdd = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER, ROLES.RADNIK].includes(roleId);
+  const canEditDelete = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER].includes(roleId);
+  const canView = roleId !== ROLES.AGRONOM;
+
+  // useCallback da bi useEffect bio čist
+  const loadExpenses = useCallback(async () => {
+    if (!canView) {
+      setExpenses([]); // prazan array za agronoma
+      setLoading(false);
+      return;
+    }
     try {
       const res = await api.get('/expenses');
-       console.log('Loaded expenses in frontend:', res.data);
       setExpenses(res.data);
     } catch (err) {
       console.error('Error loading expenses:', err);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [canView]);
 
   useEffect(() => {
     loadExpenses();
-  }, []);
+  }, [loadExpenses]);
 
-  // update forme
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // dodaj novi trošak
   const createExpense = async () => {
     if (!form.description || !form.amount) {
       alert('Unesi opis i iznos!');
@@ -62,8 +74,8 @@ export default function Expenses() {
     }
   };
 
-  // obrisi trošak
   const removeExpense = async (id) => {
+    if (!canEditDelete) return alert('Nemate dozvolu za brisanje troška.');
     try {
       await api.delete(`/expenses/${id}`);
       loadExpenses();
@@ -72,35 +84,39 @@ export default function Expenses() {
     }
   };
 
-  // formatiranje datuma
   const formatDate = (date) => date ? new Date(date).toLocaleDateString() : '-';
+
+  if (!canView) return <p className="p-6 text-red-600">Nemate pristup ovom delu.</p>;
+  if (loading) return <p className="p-6">Učitavanje troškova...</p>;
 
   return (
     <>
       <Navbar />
-      <div className="container">
-        <h2>Troškovi</h2>
+      <div className="container p-6">
+        <h2 className="text-2xl mb-4">Troškovi</h2>
 
-        <Card title="Novi trošak">
-          <Input label="Parcela ID" name="fieldId" value={form.fieldId} onChange={handleChange} />
-          <Input label="ID proizvodnje" name="productionId" value={form.productionId} onChange={handleChange} />
-          <Input label="Tip troška" name="type" value={form.type} onChange={handleChange} />
-          <Input label="Opis" name="description" value={form.description} onChange={handleChange} />
-          <Input label="Iznos (RSD)" name="amount" type="number" value={form.amount} onChange={handleChange} />
-          <Input label="Datum" name="date" type="date" value={form.date} onChange={handleChange} />
-          <Button onClick={createExpense}>Dodaj trošak</Button>
-        </Card>
+        {canAdd && (
+          <Card title="Novi trošak" className="mb-6">
+            <Input label="Parcela ID" name="fieldId" value={form.fieldId} onChange={handleChange} />
+            <Input label="ID proizvodnje" name="productionId" value={form.productionId} onChange={handleChange} />
+            <Input label="Tip troška" name="type" value={form.type} onChange={handleChange} />
+            <Input label="Opis" name="description" value={form.description} onChange={handleChange} />
+            <Input label="Iznos (RSD)" name="amount" type="number" value={form.amount} onChange={handleChange} />
+            <Input label="Datum" name="date" type="date" value={form.date} onChange={handleChange} />
+            <Button onClick={createExpense}>Dodaj trošak</Button>
+          </Card>
+        )}
 
         {expenses.length === 0 ? (
           <p>Još nema troškova.</p>
         ) : (
           expenses.map(e => (
-            <Card key={e.id} title={`Trošak #${e.id}`}>
+            <Card key={e.id} title={`Trošak #${e.id}`} className="mb-4">
               <p>Tip: {e.type ?? '-'}</p>
               <p>Iznos: {e.amount ?? '-'} RSD</p>
               <p>Parcela: {e.fieldId ?? '-'}, Proizvodnja: {e.productionId ?? '-'}</p>
               <p>Datum: {formatDate(e.date)}</p>
-              <Button onClick={() => removeExpense(e.id)}>Obriši</Button>
+              {canEditDelete && <Button onClick={() => removeExpense(e.id)}>Obriši</Button>}
             </Card>
           ))
         )}
