@@ -217,3 +217,114 @@ button {
   }
 }
 
+.dash{
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.dash .bg{
+  width: 100%;
+  background-image: linear-gradient(rgba(4, 9, 30, 0.468),rgba(4, 9, 30, 0.61));
+  animation: animate 60s ease-in-out infinite;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes animate{
+  0%,100%{
+    background-image: url(images/image.jpg);
+  }
+  20%{
+    background-image: url(images/image3.jpg);
+  }
+  40%{
+    background-image: url(images/image2.jpg);
+  }
+  60%{
+    background-image: url(images/image5.jpg);
+  }
+  80%{
+    background-image: url(images/image4.jpg);
+  }
+
+}
+
+.dash .bg .h2{
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.846);
+  border-radius: 18px;
+  height: auto;
+  padding: 5px;
+  text-align: center;
+  font-size: 40px;
+  color: #16a34a;
+}
+
+.dash .text{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 10px;
+}
+
+.dash .welc{
+  width: 100%;
+}
+
+.dash .welc .h3{
+  color: #1f7a35;
+}
+
+.dash .cards{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash .cards .c-h2{
+  font-size: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.dash .cards .card1{
+  border-radius: 18px;
+  padding:10px;
+  width: 70%;
+  background-color: #22c55e;
+}
+
+.dash .cards .card2{
+  border-radius: 18px;
+  padding:10px;
+  width: 70%;
+  background-color: #206230;
+}
+
+.dash .cards .card3{
+  border-radius: 18px;
+  padding:10px;
+  width: 70%;
+  background-color: #22c55e;
+}
+
+.dash .cards .card4{
+  border-radius: 18px;
+  padding:10px;
+  width: 70%;
+  background-color: #206230;
+}
+
+.dash .end p{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 10px;
+}
