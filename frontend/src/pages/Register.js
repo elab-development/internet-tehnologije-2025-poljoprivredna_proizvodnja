@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { api } from '../services/api';
 import { getRole } from '../services/auth';
 import Input from '../components/Input';
-import Button from '../components/Button';
+
 
 
 export default function Register() {

@@ -13,12 +13,20 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     location: {
-      type: DataTypes.STRING, // npr "45.123,19.456"
+      type: DataTypes.STRING, // i dalje može biti opisna lokacija
       allowNull: true
     },
     season: {
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    lat: {              // dodato za mapu
+      type: DataTypes.DECIMAL(10, 7),
+      allowNull: true
+    },
+    lng: {              // dodato za mapu
+      type: DataTypes.DECIMAL(10, 7),
+      allowNull: true
     }
   });
 

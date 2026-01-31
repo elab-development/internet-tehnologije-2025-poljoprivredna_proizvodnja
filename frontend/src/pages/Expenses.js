@@ -4,6 +4,7 @@ import { getRole } from '../services/auth';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
+import ExpensesChart from "../components/ExpensesChart"; // grafikon
 
 import { ROLES } from '../constants/roles';
 
@@ -26,10 +27,9 @@ export default function Expenses() {
   const canEditDelete = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER].includes(roleId);
   const canView = roleId !== ROLES.AGRONOM;
 
-  // useCallback da bi useEffect bio čist
   const loadExpenses = useCallback(async () => {
     if (!canView) {
-      setExpenses([]); // prazan array za agronoma
+      setExpenses([]);
       setLoading(false);
       return;
     }
@@ -90,37 +90,43 @@ export default function Expenses() {
   if (loading) return <p className="p-6">Učitavanje troškova...</p>;
 
   return (
-    <>
+    <div className="container p-6">
+      <h2 className="text-2xl mb-4">Troškovi</h2>
 
-      <div className="container p-6">
-        <h2 className="text-2xl mb-4">Troškovi</h2>
+      {/* Forma za dodavanje novog troška */}
+      {canAdd && (
+        <Card title="Novi trošak" className="mb-6">
+          <Input label="Parcela ID" name="fieldId" value={form.fieldId} onChange={handleChange} />
+          <Input label="ID proizvodnje" name="productionId" value={form.productionId} onChange={handleChange} />
+          <Input label="Tip troška" name="type" value={form.type} onChange={handleChange} />
+          <Input label="Opis" name="description" value={form.description} onChange={handleChange} />
+          <Input label="Iznos (RSD)" name="amount" type="number" value={form.amount} onChange={handleChange} />
+          <Input label="Datum" name="date" type="date" value={form.date} onChange={handleChange} />
+          <Button onClick={createExpense}>Dodaj trošak</Button>
+        </Card>
+      )}
 
-        {canAdd && (
-          <Card title="Novi trošak" className="mb-6">
-            <Input label="Parcela ID" name="fieldId" value={form.fieldId} onChange={handleChange} />
-            <Input label="ID proizvodnje" name="productionId" value={form.productionId} onChange={handleChange} />
-            <Input label="Tip troška" name="type" value={form.type} onChange={handleChange} />
-            <Input label="Opis" name="description" value={form.description} onChange={handleChange} />
-            <Input label="Iznos (RSD)" name="amount" type="number" value={form.amount} onChange={handleChange} />
-            <Input label="Datum" name="date" type="date" value={form.date} onChange={handleChange} />
-            <Button onClick={createExpense}>Dodaj trošak</Button>
+      {/* Grafik troškova po tipu */}
+      {expenses.length > 0 && (
+        <Card title="Grafik troškova po tipu" className="mb-6">
+          <ExpensesChart expenses={expenses} />
+        </Card>
+      )}
+
+      {/* Lista troškova */}
+      {expenses.length === 0 ? (
+        <p>Još nema troškova.</p>
+      ) : (
+        expenses.map(e => (
+          <Card key={e.id} title={`Trošak #${e.id}`} className="mb-4">
+            <p>Tip: {e.type ?? '-'}</p>
+            <p>Iznos: {e.amount ?? '-'} RSD</p>
+            <p>Parcela: {e.fieldId ?? '-'}, Proizvodnja: {e.productionId ?? '-'}</p>
+            <p>Datum: {formatDate(e.date)}</p>
+            {canEditDelete && <Button onClick={() => removeExpense(e.id)}>Obriši</Button>}
           </Card>
-        )}
-
-        {expenses.length === 0 ? (
-          <p>Još nema troškova.</p>
-        ) : (
-          expenses.map(e => (
-            <Card key={e.id} title={`Trošak #${e.id}`} className="mb-4">
-              <p>Tip: {e.type ?? '-'}</p>
-              <p>Iznos: {e.amount ?? '-'} RSD</p>
-              <p>Parcela: {e.fieldId ?? '-'}, Proizvodnja: {e.productionId ?? '-'}</p>
-              <p>Datum: {formatDate(e.date)}</p>
-              {canEditDelete && <Button onClick={() => removeExpense(e.id)}>Obriši</Button>}
-            </Card>
-          ))
-        )}
-      </div>
-    </>
+        ))
+      )}
+    </div>
   );
 }

@@ -19,8 +19,8 @@ exports.create = async (req, res) => {
       return res.status(403).json({ message: 'Niste ovlašćeni da dodate parcelu' });
     }
 
-    const { name, area, soilType, location, season } = req.body;
-    const field = await Field.create({ name, area, soilType, location, season });
+    const { name, area, soilType, location, season, lat, lng } = req.body;
+    const field = await Field.create({ name, area, soilType, location, season, lat, lng });
     res.json(field);
   } catch (err) {
     console.error(err);
@@ -39,7 +39,9 @@ exports.update = async (req, res) => {
     const field = await Field.findByPk(req.params.id);
     if (!field) return res.status(404).json({ message: 'Parcela nije pronađena' });
 
-    await field.update(req.body);
+    const { name, area, soilType, location, season, lat, lng } = req.body;
+    await field.update({ name, area, soilType, location, season, lat, lng });
+
     res.json(field);
   } catch (err) {
     console.error(err);

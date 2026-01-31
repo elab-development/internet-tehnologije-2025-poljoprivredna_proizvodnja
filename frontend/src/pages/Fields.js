@@ -4,7 +4,7 @@ import { getRole, getUserFromToken } from '../services/auth';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
-
+import FarmMap from "../components/FarmMap"; // mapa
 
 export default function Fields() {
   const [fields, setFields] = useState([]);
@@ -13,7 +13,9 @@ export default function Fields() {
     area: '',
     soilType: '',
     location: '',
-    season: 2025
+    season: 2025,
+    lat: '', // dodato za mapu
+    lng: ''  // dodato za mapu
   });
   const [editingId, setEditingId] = useState(null); 
   const [loading, setLoading] = useState(true);
@@ -49,7 +51,7 @@ export default function Fields() {
     }
     try {
       await api.post('/fields', form);
-      setForm({ name: '', area: '', soilType: '', location: '', season: 2025 });
+      setForm({ name: '', area: '', soilType: '', location: '', season: 2025, lat: '', lng: '' });
       loadFields();
     } catch (e) {
       console.error('Create error:', e);
@@ -74,7 +76,9 @@ export default function Fields() {
       area: field.area,
       soilType: field.soilType || '',
       location: field.location,
-      season: field.season || 2025
+      season: field.season || 2025,
+      lat: field.lat || '',
+      lng: field.lng || ''
     });
   };
 
@@ -83,7 +87,7 @@ export default function Fields() {
     try {
       await api.put(`/fields/${editingId}`, form);
       setEditingId(null);
-      setForm({ name: '', area: '', soilType: '', location: '', season: 2025 });
+      setForm({ name: '', area: '', soilType: '', location: '', season: 2025, lat: '', lng: '' });
       loadFields();
     } catch (e) {
       console.error('Update error:', e);
@@ -92,55 +96,75 @@ export default function Fields() {
 
   const cancelEdit = () => {
     setEditingId(null);
-    setForm({ name: '', area: '', soilType: '', location: '', season: 2025 });
+    setForm({ name: '', area: '', soilType: '', location: '', season: 2025, lat: '', lng: '' });
   };
 
   if (!user) return <p className="p-6">Molimo prijavite se da biste videli parcele.</p>;
   if (loading) return <p className="p-6">Učitavanje parcela...</p>;
 
   return (
-    <>
-  
-      <div className="p-6">
-        <h2 className="text-2xl mb-4">Parcele</h2>
+    <div className="p-6">
+      <h2 className="text-2xl mb-4">Parcele</h2>
 
-        {canEdit && (
-          <Card title={editingId ? 'Izmena parcele' : 'Dodaj parcelu'}>
-            <Input label="Naziv" name="name" value={form.name} onChange={handleChange} />
-            <Input label="Površina (ha)" name="area" value={form.area} onChange={handleChange} />
-            <Input label="Tip zemljišta" name="soilType" value={form.soilType} onChange={handleChange} />
-            <Input label="Lokacija" name="location" value={form.location} onChange={handleChange} />
-            <Input label="Sezona" name="season" value={form.season} onChange={handleChange} />
-            {editingId ? (
+      {/* Forma za dodavanje/izmenu */}
+      {canEdit && (
+        <Card title={editingId ? 'Izmena parcele' : 'Dodaj parcelu'} className="mb-6">
+          <Input label="Naziv" name="name" value={form.name} onChange={handleChange} />
+          <Input label="Površina (ha)" name="area" value={form.area} onChange={handleChange} />
+          <Input label="Tip zemljišta" name="soilType" value={form.soilType} onChange={handleChange} />
+          <Input label="Lokacija" name="location" value={form.location} onChange={handleChange} />
+          <Input label="Sezona" name="season" value={form.season} onChange={handleChange} />
+          <Input label="Latitude" name="lat" value={form.lat} onChange={handleChange} />
+          <Input label="Longitude" name="lng" value={form.lng} onChange={handleChange} />
+          {editingId ? (
+            <>
+              <Button onClick={saveEdit}>Sačuvaj izmene</Button>
+              <Button onClick={cancelEdit} style={{ marginLeft: '10px' }}>Otkaži</Button>
+            </>
+          ) : (
+            <Button onClick={createField}>Dodaj parcelu</Button>
+          )}
+        </Card>
+      )}
+
+      {/* Mapa parcela */}
+      {fields.length > 0 && (
+        <Card title="Mapa parcela" className="mb-6">
+          <FarmMap
+            apiKey="AIzaSyBUsmXNLle1memwRIS63SId3F7AnjpyR1g"
+            locations={fields
+              .filter(f => f.lat && f.lng)
+              .map(f => ({
+                id: f.id,
+                name: f.name,
+                lat: Number(f.lat),
+                lng: Number(f.lng)
+              }))}
+          />
+        </Card>
+      )}
+
+      {/* Lista parcela */}
+      {fields.length === 0 ? (
+        <p className="mt-4">Nema parcela.</p>
+      ) : (
+        fields.map(f => (
+          <Card key={f.id} title={f.name} className="mt-4">
+            <p>Površina: {f.area} ha</p>
+            <p>Zemljište: {f.soilType}</p>
+            <p>Lokacija: {f.location}</p>
+            <p>Sezona: {f.season}</p>
+            <p>Lat: {f.lat ?? '-'}</p>
+            <p>Lng: {f.lng ?? '-'}</p>
+            {canEdit && (
               <>
-                <Button onClick={saveEdit}>Sačuvaj izmene</Button>
-                <Button onClick={cancelEdit} style={{ marginLeft: '10px' }}>Otkaži</Button>
+                <Button onClick={() => startEdit(f)}>Izmeni</Button>
+                <Button onClick={() => removeField(f.id)} style={{ marginLeft: '10px' }}>Obriši</Button>
               </>
-            ) : (
-              <Button onClick={createField}>Dodaj parcelu</Button>
             )}
           </Card>
-        )}
-
-        {fields.length === 0 ? (
-          <p className="mt-4">Nema parcela.</p>
-        ) : (
-          fields.map(f => (
-            <Card key={f.id} title={f.name} className="mt-4">
-              <p>Površina: {f.area} ha</p>
-              <p>Zemljište: {f.soilType}</p>
-              <p>Lokacija: {f.location}</p>
-              <p>Sezona: {f.season}</p>
-              {canEdit && (
-                <>
-                  <Button onClick={() => startEdit(f)}>Izmeni</Button>
-                  <Button onClick={() => removeField(f.id)} style={{ marginLeft: '10px' }}>Obriši</Button>
-                </>
-              )}
-            </Card>
-          ))
-        )}
-      </div>
-    </>
+        ))
+      )}
+    </div>
   );
 }
