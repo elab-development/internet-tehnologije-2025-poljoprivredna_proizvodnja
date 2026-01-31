@@ -10,23 +10,17 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Routes
-const userRoutes = require('./routes/userRoutes');
-const fieldRoutes = require('./routes/fieldRoutes');
-const cropRoutes = require('./routes/cropRoutes');
-const productionRoutes = require('./routes/productionRoutes');
-const expenseRoutes = require('./routes/expenseRoutes');
-const reportRoutes = require('./routes/reportRoutes');
-const notificationRoutes = require('./routes/notificationRoutes');
-app.use('/api/notifications', notificationRoutes);
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/fields', require('./routes/fieldRoutes'));
+app.use('/api/crops', require('./routes/cropRoutes'));
+app.use('/api/productions', require('./routes/productionRoutes'));
+app.use('/api/expenses', require('./routes/expenseRoutes'));
+app.use('/api/reports', require('./routes/reportRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
 
-app.use('/api/reports', reportRoutes);
-
-
-app.use('/api/users', userRoutes);
-app.use('/api/fields', fieldRoutes);
-app.use('/api/crops', cropRoutes);
-app.use('/api/productions', productionRoutes);
-app.use('/api/expenses', expenseRoutes);
+// Swagger
+const { swaggerUi, swaggerSpec } = require('./swagger');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Start server
 app.listen(port, () => {
