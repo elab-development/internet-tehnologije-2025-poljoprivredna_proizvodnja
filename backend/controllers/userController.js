@@ -10,17 +10,18 @@ exports.register = async (req, res) => {
     // Ko pravi korisnika
     const creatorRole = req.user.roleId;
 
-    // ❌ Ako nije Admin ili Owner
+    // Ako nije Admin ili Owner
     if (![1, 4].includes(creatorRole)) {
       return res.status(403).json({ message: 'Nemate pravo da dodajete korisnike' });
     }
 
-    // ❌ Owner ne sme da doda Admina
+
+    // Owner ne sme da doda Admina
     if (creatorRole === 4 && roleId === 1) {
       return res.status(403).json({ message: 'Vlasnik ne može da dodaje admina' });
     }
 
-    // ❌ Owner sme samo ispod sebe
+    // Owner sme samo ispod sebe
     if (creatorRole === 4 && ![2, 3, 5].includes(roleId)) {
       return res.status(403).json({ message: 'Ne možete dodati ovu ulogu' });
     }

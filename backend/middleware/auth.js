@@ -5,7 +5,8 @@ module.exports = (req, res, next) => {
   if (!token) return res.status(401).json({ error: 'No token' });
 
   try {
-    req.user = jwt.verify(token, 'tajni_kljuc'); // ⬅ ISTI KLJUČ
+    req.user = jwt.verify(token, 'tajni_kljuc'); //  ISTI KLJUČ
+
     next();
   } catch (err) {
     return res.status(401).json({ error: 'Invalid token' });

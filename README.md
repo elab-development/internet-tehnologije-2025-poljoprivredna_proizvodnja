@@ -1,4 +1,6 @@
-# 🌾 Sistem za upravljanje poljoprivrednom proizvodnjom
+
+# Sistem za upravljanje poljoprivrednom proizvodnjom
+
 
 Ova aplikacija predstavlja informacioni sistem za evidenciju i upravljanje poljoprivrednom proizvodnjom. Namenjena je proizvođačima i administratorima radi praćenja parcela, proizvodnje, prinosa i statistike.
 
@@ -6,7 +8,9 @@ Aplikacija je razvijena kao full-stack web rešenje sa REST API-jem, Docker podr
 
 ---
 
-## 🚀 Funkcionalnosti
+
+## Funkcionalnosti
+
 
 - Upravljanje poljoprivrednim parcelama
 - Evidencija proizvodnje i prinosa
@@ -17,13 +21,15 @@ Aplikacija je razvijena kao full-stack web rešenje sa REST API-jem, Docker podr
 
 ---
 
-## 🛠️ Tehnologije
+
+## Tehnologije
+
 
 ### Backend
 - Node.js
 - Express.js
 - Sequelize ORM
-- MySQL / PostgreSQL
+- MySQL 
 - Swagger (OpenAPI)
 
 ### Frontend
@@ -38,7 +44,18 @@ Aplikacija je razvijena kao full-stack web rešenje sa REST API-jem, Docker podr
 
 ---
 
-## 📦 Pokretanje aplikacije (Docker)
+
+## Pokretanje aplikacije lokalno
+-bash koji je otvoren u backendu
+-npm start
+
+-bash koji je otvoren u frontendu
+-npm start
+
+---
+
+## Pokretanje aplikacije (Docker)
+
 
 ### Preduslovi
 - Docker

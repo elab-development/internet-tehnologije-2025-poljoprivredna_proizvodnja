@@ -26,7 +26,7 @@ const options = {
       },
     },
   },
-  apis: [path.join(__dirname, 'routes/*.js')], // 🔴 OVO JE KLJUČNO
+  apis: [path.join(__dirname, 'routes/*.js')], // OVO JE KLJUČNO
 };
 
 const swaggerSpec = swaggerJsdoc(options);
