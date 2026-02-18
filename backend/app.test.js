@@ -15,4 +15,10 @@ describe('Test API endpoints', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ data: 'Test Data' });
   });
+
+  test('GET /nonexistent should return 404', async () => {
+    const res = await request(app).get('/nonexistent');
+    expect(res.statusCode).toBe(404);
+  });
+
 });
