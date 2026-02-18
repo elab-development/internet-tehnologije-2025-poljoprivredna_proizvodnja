@@ -21,7 +21,7 @@ app.use("/api/notifications", notificationRoutes);
 
 // Test ruta
 app.get("/", (req, res) => {
-  res.send("API je live!");
+  res.send("API je ziv!");
 });
 
 // Sinhronizacija sa bazom i start servera
